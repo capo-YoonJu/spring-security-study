@@ -21,6 +21,8 @@ public class User {
 	private String password;
 	private String email;
 	private String role;   // ROLE_USER, ROLE_ADMIN
+	// 휴면 계정 설정을 위한 로그인 날짜 필드
+	// private Timestamp loginDate;
 	@CreationTimestamp
 	private Timestamp createDate;
 }

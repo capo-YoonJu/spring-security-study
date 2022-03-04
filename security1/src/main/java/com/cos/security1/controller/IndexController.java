@@ -1,6 +1,10 @@
 package com.cos.security1.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -65,6 +69,24 @@ public class IndexController {
 		
 		userRepository.save(user);     // 회원가입은 잘되는데 이러면 안됨. -> 시큐리티 로긴 불가능. 패스워드 암호화가 안되어있기때문
 		return "redirect:/loginForm";
+	}
+	
+	// SecurityConfig에서 @EnableGlobalMethodSecurity(securedEnabled = true) 어노테이션에 의해 활성화됨. 간단하게 이 메서드를 특정 권한만 요청할 수 있도록 함
+	// SecurityConfig의 configure() 메서드 내부에서 체이닝으로 설정하는 것은 글로벌한 설정이고
+	// @Secured()는 메서드에만 간단하게 권한 설정하는 것임
+	@Secured("ROLE_ADMIN")
+	@GetMapping("/info")
+	public @ResponseBody String info() {
+		return "개인 정보";
+	}
+	
+	// SecurityConfig에서 @EnableGlobalMethodSecurity(prePostEnabled = true) 어노테이션에 의해 활성화됨. 이 메서드가 실행되기 전에 조건을 검사
+	// 이 메서드가 실행되고 난 뒤 조건검사 하고싶으면 @PostAuthorize() 하면 됨
+	// 일반적으로 @PreAuthorize 보다는 @Secured()로 검사하는 경우가 많음
+	@PreAuthorize("hasRole('ROLE_MANAGER') or hasRole('ROLE_ADMIN')")     // 권한 여러개 설정하기 위해 hasRole() or hasRole()
+	@GetMapping("/data")
+	public @ResponseBody String data() {
+		return "데이터 정보";
 	}
 }
  
