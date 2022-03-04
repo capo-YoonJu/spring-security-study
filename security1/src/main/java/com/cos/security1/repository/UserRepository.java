@@ -8,4 +8,6 @@ import com.cos.security1.model.User;
 // @Repository 어노테이션 없이도 IoC -> JpaRepository 상속했기때문!!
 public interface UserRepository extends JpaRepository<User, Integer>{
 
+	// JPA Query Methods
+	public User findByUsername(String username);
 }
